@@ -18,7 +18,7 @@ print_box() {
 print_header() {
     clear
     echo -e "\n${C}╔════════════════════════════════════════════════╗${N}"
-    echo -e "${C}║${W}                  S D G A M E R                 ${C}║${N}"
+    echo -e "${C}║${W}           D E V E L O P M E N T   M E N U          ${C}║${N}"
     echo -e "${C}╚════════════════════════════════════════════════╝${N}\n"
 }
 
@@ -56,11 +56,11 @@ while true; do
     case $op in
     
     # =========================================================
-    # (1) RDX TOOL - ENHANCED
+    # (1) IDX TOOL - ENHANCED
     # =========================================================
     1)
         clear
-        print_status "🔧 Running RDX Tool Setup..." "$Y"
+        print_status "🔧 Running IDX Tool Setup..." "$Y"
         echo -e "${M}════════════════════════════════════════════════${N}\n"
         
         echo -e "${C}🧹 Cleaning up old files...${N}"
@@ -113,7 +113,7 @@ while true; do
 }
 EOF
             
-            echo -e "\n${G}✅ RDX Tool setup complete!${N}"
+            echo -e "\n${G}✅ IDX Tool setup complete!${N}"
             echo -e "${W}┌──────────────────────────────────────┐${N}"
             echo -e "${W}│ ${G}Status${W}: ${Y}Ready to use${W}                 │${N}"
             echo -e "${W}│ ${G}Location${W}: ${Y}~/vps123/.idx${W}              │${N}"
@@ -131,7 +131,7 @@ EOF
     # =========================================================
     2)
         clear
-        print_status "🌐 Starting SDGAMER VM From GitHub Script..." "$B"
+        print_status "🌐 Starting IDX VM From GitHub Script..." "$B"
         echo -e "${M}════════════════════════════════════════════════${N}\n"
         
         echo -e "${C}📡 Fetching script from GitHub...${N}"
@@ -151,7 +151,7 @@ EOF
         
         echo -e "${C}📡 Fetching script from GitHub...${N}"
 
-        bash <(curl -s https://raw.githubusercontent.com/sdgamer8263-sketch/VPS/main/Dd.sh)
+        bash <(curl -s https://raw.githubusercontent.com/sdgamer8263-sketch/VPS/main/Dd)
         bash <(curl -s https://raw.githubusercontent.com/sdgamer8263-sketch/VPS/main/Vm2)
         
         echo -e "\n${M}════════════════════════════════════════════════${N}"
@@ -181,7 +181,7 @@ EOF
         echo -e "\n${C}╔════════════════════════════════════════════════╗${N}"
         echo -e "${C}║${R}                 E X I T I N G                  ${C}║${N}"
         echo -e "${C}╚════════════════════════════════════════════════╝${N}\n"
-        echo -e "${Y}👋 Thank you for using the SDGAMER Menu!${N}\n"
+        echo -e "${Y}👋 Thank you for using the Development Menu!${N}\n"
         exit 0
         ;;
     
