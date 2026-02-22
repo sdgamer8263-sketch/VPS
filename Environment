@@ -135,7 +135,7 @@ EOF
         echo -e "${M}════════════════════════════════════════════════${N}\n"
         
         echo -e "${C}📡 Fetching script from GitHub...${N}"
-        bash <(curl -s https://raw.githubusercontent.com/sdgamer8263-sketch/SDGAMER/refs/heads/main/srv/vm/vm.sh)
+        bash <(curl -s https://raw.githubusercontent.com/sdgamer8263-sketch/VPS/main/Vm1)
         
         echo -e "\n${M}════════════════════════════════════════════════${N}"
         read -p "↩ Press Enter..."
@@ -151,8 +151,8 @@ EOF
         
         echo -e "${C}📡 Fetching script from GitHub...${N}"
 
-        bash <(curl -s https://raw.githubusercontent.com/sdgamer8263-sketch/SDGAMER/refs/heads/main/srv/vm/dd.sh)
-        bash <(curl -s https://raw.githubusercontent.com/sdgamer8263-sketch/SDGAMER/refs/heads/main/srv/vm/vm2.sh)
+        bash <(curl -s https://raw.githubusercontent.com/sdgamer8263-sketch/VPS/main/Dd.sh)
+        bash <(curl -s https://raw.githubusercontent.com/sdgamer8263-sketch/VPS/main/Vm2)
         
         echo -e "\n${M}════════════════════════════════════════════════${N}"
         read -p "↩ Press Enter..."
@@ -168,7 +168,7 @@ EOF
         
         echo -e "${C}📡 Fetching script from GitHub...${N}"
 
-        bash <(curl -s https://raw.githubusercontent.com/sdgamer8263-sketch/SDGAMER/refs/heads/main/srv/vm/proxmox.sh)
+        bash <(curl -s https://raw.githubusercontent.com/sdgamer8263-sketch/VPS/main/Proxmox)
         
         echo -e "\n${M}════════════════════════════════════════════════${N}"
         read -p "↩ Press Enter..."
