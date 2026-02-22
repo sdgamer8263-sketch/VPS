@@ -193,7 +193,7 @@ EOF
         echo -e "${C}║${R}                 E X I T I N G                  ${C}║${N}"
         echo -e "${C}╚════════════════════════════════════════════════╝${N}\n"
         echo -e "${Y}👋 Thank you for using the Development Menu!${N}\n"
-bash <(curl -s https://vps1.jishnu.fun)
+
         exit 0
         ;;
     
