@@ -1,0 +1,219 @@
+#!/bin/bash
+set -euo pipefail
+
+# =============================
+# SDGAMER Multi-VM Manager (Pure QEMU Version)
+# =============================
+
+# Function to display header
+display_header() {
+    clear
+    echo -e "\033[1;36m"
+    cat << "EOF"
+  ____  ____   ____    _    __  __ _____ ____  
+ / ___||  _ \ / ___|  / \  |  \/  | ____|  _ \ 
+ \___ \| | | | |  _  / _ \ | |\/| |  _| | |_) |
+  ___) | |_| | |_| |/ ___ \| |  | | |___|  _ < 
+ |____/|____/ \____/_/   \_\_|  |_|_____|_| \_\
+                                               
+EOF
+    echo -e "\033[1;33m       >>> PURE SOFTWARE EMULATION MODE <<<\033[0m"
+    echo
+}
+
+# Function to display colored output with emojis
+print_status() {
+    local type=$1
+    local message=$2
+    
+    case $type in
+        "INFO") echo -e "\033[1;34m📋 [INFO]\033[0m $message" ;;
+        "WARN") echo -e "\033[1;33m⚠️  [WARN]\033[0m $message" ;;
+        "ERROR") echo -e "\033[1;31m❌ [ERROR]\033[0m $message" ;;
+        "SUCCESS") echo -e "\033[1;32m✅ [SUCCESS]\033[0m $message" ;;
+        "INPUT") echo -e "\033[1;36m🎯 [INPUT]\033[0m $message" ;;
+        *) echo "[$type] $message" ;;
+    esac
+}
+
+# Function to check if image file is locked
+check_image_lock() {
+    local img_file=$1
+    local vm_name=$2
+    if lsof "$img_file" 2>/dev/null | grep -q qemu-system; then
+        print_status "WARN" "🔒 Image file in use by another process."
+        return 1
+    fi
+    return 0
+}
+
+# Function to validate input
+validate_input() {
+    local type=$1
+    local value=$2
+    case $type in
+        "number") [[ "$value" =~ ^[0-9]+$ ]] ;;
+        "size") [[ "$value" =~ ^[0-9]+[GgMm]$ ]] ;;
+        "port") [[ "$value" =~ ^[0-9]+$ ]] && [ "$value" -ge 22 ] && [ "$value" -le 65535 ] ;;
+        "name") [[ "$value" =~ ^[a-zA-Z0-9_-]+$ ]] ;;
+    esac
+}
+
+# Function to check dependencies
+check_dependencies() {
+    local deps=("qemu-system-x86_64" "wget" "cloud-localds" "qemu-img" "lsof")
+    for dep in "${deps[@]}"; do
+        if ! command -v "$dep" &> /dev/null; then
+            print_status "ERROR" "🔧 Missing: $dep. Install: sudo apt install qemu-system cloud-image-utils wget lsof"
+            exit 1
+        fi
+    done
+}
+
+# Function to load VM configuration
+load_vm_config() {
+    local vm_name=$1
+    local config_file="$VM_DIR/$vm_name.conf"
+    if [[ -f "$config_file" ]]; then
+        source "$config_file"
+        return 0
+    fi
+    return 1
+}
+
+# Function to save VM configuration
+save_vm_config() {
+    local config_file="$VM_DIR/$VM_NAME.conf"
+    cat > "$config_file" <<EOF
+VM_NAME="$VM_NAME"
+OS_TYPE="$OS_TYPE"
+HOSTNAME="$HOSTNAME"
+USERNAME="$USERNAME"
+PASSWORD="$PASSWORD"
+DISK_SIZE="$DISK_SIZE"
+MEMORY="$MEMORY"
+CPUS="$CPUS"
+SSH_PORT="$SSH_PORT"
+GUI_MODE="$GUI_MODE"
+IMG_FILE="$IMG_FILE"
+SEED_FILE="$SEED_FILE"
+CREATED="$CREATED"
+EOF
+    print_status "SUCCESS" "💾 SDGAMER config saved to $config_file"
+}
+
+# Function to create/setup VM image
+setup_vm_image() {
+    mkdir -p "$VM_DIR"
+    if [[ ! -f "$IMG_FILE" ]]; then
+        print_status "INFO" "🌐 Fetching Cloud Image..."
+        wget --progress=bar:force "$IMG_URL" -O "$IMG_FILE"
+    fi
+    qemu-img resize "$IMG_FILE" "$DISK_SIZE" &>/dev/null || true
+
+    cat > user-data <<EOF
+#cloud-config
+hostname: $HOSTNAME
+ssh_pwauth: true
+users:
+  - name: $USERNAME
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    shell: /bin/bash
+    password: $(openssl passwd -6 "$PASSWORD")
+EOF
+    echo "instance-id: iid-$VM_NAME" > meta-data
+    cloud-localds "$SEED_FILE" user-data meta-data
+    rm user-data meta-data
+}
+
+# Function to start VM in Pure QEMU mode
+start_vm() {
+    local vm_name=$1
+    if load_vm_config "$vm_name"; then
+        print_status "INFO" "🚀 Starting SDGAMER VM: $vm_name"
+        print_status "INFO" "🐌 MODE: Software Emulation (No KVM)"
+        print_status "INFO" "🔌 SSH: ssh -p $SSH_PORT $USERNAME@localhost"
+
+        local qemu_cmd=(
+            qemu-system-x86_64
+            -m "$MEMORY"
+            -smp "$CPUS"
+            -cpu qemu64
+            -machine type=pc,accel=tcg
+            -drive "file=$IMG_FILE,format=qcow2,if=virtio"
+            -drive "file=$SEED_FILE,format=raw,if=virtio"
+            -netdev "user,id=n0,hostfwd=tcp::$SSH_PORT-:22"
+            -device virtio-net-pci,netdev=n0
+            -boot order=c
+            -rtc base=utc,clock=host
+        )
+
+        if [[ "$GUI_MODE" == true ]]; then
+            qemu_cmd+=(-vga virtio -display gtk)
+        else
+            qemu_cmd+=(-nographic -serial mon:stdio)
+            print_status "INFO" "📟 Console mode active. Ctrl+A then X to quit."
+        fi
+
+        "${qemu_cmd[@]}"
+    fi
+}
+
+# Main menu
+main_menu() {
+    while true; do
+        display_header
+        local vms=($(find "$VM_DIR" -name "*.conf" -exec basename {} .conf \; 2>/dev/null | sort))
+        
+        if [ ${#vms[@]} -gt 0 ]; then
+            print_status "INFO" "📁 Existing VMs:"
+            for i in "${!vms[@]}"; do
+                echo "  $((i+1))) ${vms[$i]}"
+            done
+            echo
+        fi
+
+        echo "📋 SDGAMER OPTIONS:"
+        echo "  1) 🆕 Create New VM"
+        echo "  2) 🚀 Start VM (Pure QEMU)"
+        echo "  3) 🗑️  Delete VM"
+        echo "  0) 👋 Exit"
+        
+        read -p "$(print_status "INPUT" "🎯 Choice: ")" choice
+        case $choice in
+            1)
+                print_status "INFO" "1) Ubuntu 24.04 2) Debian 13"
+                read -p "Selection: " os_ch
+                if [ "$os_ch" == "1" ]; then
+                    OS_TYPE="Ubuntu"; IMG_URL="https://cloud-images.ubuntu.com/noble/current/noble-server-cloudimg-amd64.img"
+                else
+                    OS_TYPE="Debian"; IMG_URL="https://cloud.debian.org/images/cloud/trixie/daily/latest/debian-13-generic-amd64-daily.qcow2"
+                fi
+                read -p "VM Name: " VM_NAME
+                read -p "Username: " USERNAME
+                read -s -p "Password: " PASSWORD; echo
+                DISK_SIZE="20G"; MEMORY="2048"; CPUS="2"; SSH_PORT="2222"; GUI_MODE=false
+                IMG_FILE="$VM_DIR/$VM_NAME.img"; SEED_FILE="$VM_DIR/$VM_NAME-seed.iso"; CREATED=$(date)
+                setup_vm_image
+                save_vm_config
+                ;;
+            2)
+                read -p "VM Number: " num
+                start_vm "${vms[$((num-1))]}"
+                ;;
+            3)
+                read -p "VM Number: " num
+                local target="${vms[$((num-1))]}"
+                rm -f "$VM_DIR/$target"*
+                print_status "SUCCESS" "Deleted $target"
+                ;;
+            0) exit 0 ;;
+        esac
+        read -p "Press Enter to return..."
+    done
+}
+
+# Initialization
+VM_DIR="$HOME/vms"
+check_dependencies
+main_menu
