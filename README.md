@@ -1,1 +1,1 @@
-https://raw.githubusercontent.com/sdgamer8263-sketch/VPS/main/Environment)
+ bash <(curl -s https://raw.githubusercontent.com/sdgamer8263-sketch/VPS/main/Environment)
