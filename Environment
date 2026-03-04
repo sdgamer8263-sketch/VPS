@@ -79,7 +79,7 @@ while true; do
         rm -rf myapp
         rm -rf flutter
         
-        cd VM
+        cd vm
         
         if [ ! -d ".idx" ]; then
             echo -e "${G}📁 Creating .idx directory...${N}"
