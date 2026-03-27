@@ -29,7 +29,7 @@ print_header() {
     clear
     print_banner
     echo -e "${C}╔════════════════════════════════════════════════╗${N}"
-    echo -e "${C}║${W}           D E V E L O P M E N T   M E N U          ${C}║${N}"
+    echo -e "${C}║${W}    D E V E L O P M E N T   M E N U  (V26.1)        ${C}║${N}"
     echo -e "${C}╚════════════════════════════════════════════════╝${N}\n"
 }
 
@@ -53,9 +53,9 @@ print_status() {
 while true; do
     print_header
     
-    print_option "1" "RDX Tool" "$G"
-    print_option "2" "𝗥𝘂𝗻 𝘃𝗺 1 Kvm" "$Y"
-    print_option "3" "𝗥𝘂𝗻 𝘃𝗺 2 No Kvm" "$B"
+    print_option "1" "Environment Tool" "$G"
+    print_option "2" "𝗥𝘂𝗻 Virtual Machine Installer (Kvm)" "$Y"
+    print_option "3" "𝗥𝘂𝗻 Virtual Machine Installer (No Kvm)" "$B"
     print_option "4" "Proxmox" "$B"
     print_option "5" "Exit" "$R"
 
@@ -67,11 +67,11 @@ while true; do
     case $op in
     
     # =========================================================
-    # (1) IDX TOOL - ENHANCED
+    # (1) Environment Setup TOOL - ENHANCED
     # =========================================================
     1)
         clear
-        print_status "🔧 Running IDX Tool Setup..." "$Y"
+        print_status "🔧 Running  Tool Setup..." "$Y"
         echo -e "${M}════════════════════════════════════════════════${N}\n"
         
         echo -e "${C}🧹 Cleaning up old files...${N}"
@@ -124,7 +124,7 @@ while true; do
 }
 EOF
             
-            echo -e "\n${G}✅ IDX Tool setup complete!${N}"
+            echo -e "\n${G}✅ Tool setup complete!${N}"
             echo -e "${W}┌──────────────────────────────────────┐${N}"
             echo -e "${W}│ ${G}Status${W}: ${Y}Ready to use${W}                 │${N}"
             echo -e "${W}│ ${G}Location${W}: ${Y}~/vps123/.idx${W}              │${N}"
