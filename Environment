@@ -23,7 +23,7 @@ WHITE="\e[37m"
 print_menu() {
     clear
     # ASCII Banner
-    echo -e "${MAGENTA}${BOLD}"
+    echo -e "${GREEN}${BOLD}"
     echo -e "   ██████  ██████   ██████   █████  ███    ███ ███████ ██████  "
     echo -e "  ██       ██   ██ ██       ██   ██ ████  ████ ██      ██   ██ "
     echo -e "   █████   ██   ██ ██   ███ ███████ ██ ████ ██ █████   ██████  "
@@ -33,7 +33,7 @@ print_menu() {
 
     # Main Menu Box
     echo -e "${CYAN}  ╭──────────────────────────────────────────────────────╮${RESET}"
-    echo -e "${CYAN}  │${BOLD}${WHITE}               D E V E L O P M E N T   M E N U        ${CYAN}│${RESET}"
+    echo -e "${CYAN}  │${BOLD}${WHITE}        D E V E L O P M E N T   M E N U  (V26.1)      ${CYAN}│${RESET}"
     echo -e "${CYAN}  ├──────────────────────────────────────────────────────┤${RESET}"
     echo -e "${CYAN}  │                                                      │${RESET}"
     echo -e "${CYAN}  │   ${GREEN}[1]${RESET} Environment Tool                               ${CYAN}│${RESET}"
