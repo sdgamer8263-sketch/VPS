@@ -1,92 +1,95 @@
 #!/bin/bash
 
-# COLORS
-R="\e[31m"; G="\e[32m"; Y="\e[33m"; B="\e[34m"; C="\e[36m"; M="\e[35m"; W="\e[37m"; N="\e[0m"
+# ==========================================
+# COLOR & STYLE DEFINITIONS
+# ==========================================
+RESET="\e[0m"
+BOLD="\e[1m"
+DIM="\e[2m"
 
-# NEW UI STYLE FUNCTIONS
-print_banner() {
-    echo -e "${M}"
-    echo -e "  ██████  ██████   ██████   █████  ███    ███ ███████ ██████  "
-    echo -e " ██       ██   ██ ██       ██   ██ ████  ████ ██      ██   ██ "
-    echo -e "  █████   ██   ██ ██   ███ ███████ ██ ████ ██ █████   ██████  "
-    echo -e "      ██  ██   ██ ██    ██ ██   ██ ██  ██  ██ ██      ██   ██ "
-    echo -e "  ██████  ██████   ██████  ██   ██ ██      ██ ███████ ██   ██ "
-    echo -e "${N}"
-}
+# Colors
+RED="\e[31m"
+GREEN="\e[32m"
+YELLOW="\e[33m"
+BLUE="\e[34m"
+MAGENTA="\e[35m"
+CYAN="\e[36m"
+WHITE="\e[37m"
 
-print_box() {
-    local text="$1"
-    local color="$2"
-    local width=50
-    local padding=$(( (width - ${#text} - 2) / 2 ))
-    
-    echo -e "${color}┌$(printf '─%.0s' $(seq 1 $((width-2))))┐${N}"
-    printf "${color}│%*s%s%*s│${N}\n" $padding "" "$text" $((padding - ((${#text} % 2) ? 1 : 0))) ""
-    echo -e "${color}└$(printf '─%.0s' $(seq 1 $((width-2))))┘${N}"
-}
+# ==========================================
+# UI FUNCTIONS
+# ==========================================
 
-print_header() {
+print_menu() {
     clear
-    print_banner
-    echo -e "${C}╔════════════════════════════════════════════════╗${N}"
-    echo -e "${C}║${W}    D E V E L O P M E N T   M E N U  (V26.1)        ${C}║${N}"
-    echo -e "${C}╚════════════════════════════════════════════════╝${N}\n"
-}
+    # ASCII Banner
+    echo -e "${MAGENTA}${BOLD}"
+    echo -e "   ██████  ██████   ██████   █████  ███    ███ ███████ ██████  "
+    echo -e "  ██       ██   ██ ██       ██   ██ ████  ████ ██      ██   ██ "
+    echo -e "   █████   ██   ██ ██   ███ ███████ ██ ████ ██ █████   ██████  "
+    echo -e "       ██  ██   ██ ██    ██ ██   ██ ██  ██  ██ ██      ██   ██ "
+    echo -e "   ██████  ██████   ██████  ██   ██ ██      ██ ███████ ██   ██ "
+    echo -e "${RESET}\n"
 
-print_option() {
-    local num="$1"
-    local text="$2"
-    local color="$3"
-    
-    echo -e "  ${color}┌──────────────────────────────────────┐${N}"
-    echo -e "  ${color}│${W}  [$num]  $text$(printf '%*s' $((31 - ${#text} - 6)))${color}│${N}"
-    echo -e "  ${color}└──────────────────────────────────────┘${N}\n"
+    # Main Menu Box
+    echo -e "${CYAN}  ╭──────────────────────────────────────────────────────╮${RESET}"
+    echo -e "${CYAN}  │${BOLD}${WHITE}               D E V E L O P M E N T   M E N U        ${CYAN}│${RESET}"
+    echo -e "${CYAN}  ├──────────────────────────────────────────────────────┤${RESET}"
+    echo -e "${CYAN}  │                                                      │${RESET}"
+    echo -e "${CYAN}  │   ${GREEN}[1]${RESET} Environment Tool                               ${CYAN}│${RESET}"
+    echo -e "${CYAN}  │   ${YELLOW}[2]${RESET} Run Virtual Machine Installer (KVM)            ${CYAN}│${RESET}"
+    echo -e "${CYAN}  │   ${BLUE}[3]${RESET} Run Virtual Machine Installer (No KVM)         ${CYAN}│${RESET}"
+    echo -e "${CYAN}  │   ${MAGENTA}[4]${RESET} Proxmox Setup                                  ${CYAN}│${RESET}"
+    echo -e "${CYAN}  │   ${RED}[5]${RESET} Exit                                           ${CYAN}│${RESET}"
+    echo -e "${CYAN}  │                                                      │${RESET}"
+    echo -e "${CYAN}  ╰──────────────────────────────────────────────────────╯${RESET}"
+    echo -e ""
 }
 
 print_status() {
     local text="$1"
     local color="$2"
-    echo -e "\n${color}▶▶ ${text}${N}\n"
+    echo -e "\n  ${color}${BOLD}▶ ${text}${RESET}\n"
 }
 
-# MAIN MENU LOOP
-while true; do
-    print_header
-    
-    print_option "1" "Environment Tool" "$G"
-    print_option "2" "𝗥𝘂𝗻 Virtual Machine Installer (Kvm)" "$Y"
-    print_option "3" "𝗥𝘂𝗻 Virtual Machine Installer (No Kvm)" "$B"
-    print_option "4" "Proxmox" "$B"
-    print_option "5" "Exit" "$R"
+print_divider() {
+    echo -e "  ${DIM}────────────────────────────────────────────────────────${RESET}"
+}
 
+# ==========================================
+# MAIN LOOP
+# ==========================================
+
+while true; do
+    print_menu
     
-    echo -e "${M}════════════════════════════════════════════════${N}"
-    echo -ne "${W}Select Option → ${N}"
+    # Sleek prompt
+    echo -ne "  ${CYAN}▶${RESET} ${BOLD}Select Option:${RESET} "
     read -p "" op
     
     case $op in
     
-    # =========================================================
-    # (1) Environment Setup TOOL - ENHANCED
-    # =========================================================
+    # ---------------------------------------------------------
+    # (1) Environment Setup TOOL
+    # ---------------------------------------------------------
     1)
         clear
-        print_status "🔧 Running  Tool Setup..." "$Y"
-        echo -e "${M}════════════════════════════════════════════════${N}\n"
+        print_status "🔧 Running Environment Tool Setup..." "$GREEN"
+        print_divider
         
-        echo -e "${C}🧹 Cleaning up old files...${N}"
-        cd
-        rm -rf myapp
-        rm -rf flutter
+        echo -e "  ${CYAN}🧹 Cleaning up old files...${RESET}"
+        cd ~ || exit
+        rm -rf myapp flutter
         
-        cd vm
+        # Ensure vm directory exists before cd
+        mkdir -p vm && cd vm || exit
         
         if [ ! -d ".idx" ]; then
-            echo -e "${G}📁 Creating .idx directory...${N}"
+            echo -e "  ${GREEN}📁 Creating .idx directory...${RESET}"
             mkdir .idx
-            cd .idx
+            cd .idx || exit
             
-            echo -e "${C}📝 Creating dev.nix configuration...${N}"
+            echo -e "  ${CYAN}📝 Creating dev.nix configuration...${RESET}"
             cat <<EOF > dev.nix
 { pkgs, ... }: {
   channel = "stable-24.05";
@@ -124,81 +127,83 @@ while true; do
 }
 EOF
             
-            echo -e "\n${G}✅ Tool setup complete!${N}"
-            echo -e "${W}┌──────────────────────────────────────┐${N}"
-            echo -e "${W}│ ${G}Status${W}: ${Y}Ready to use${W}                 │${N}"
-            echo -e "${W}│ ${G}Location${W}: ${Y}~/vps123/.idx${W}              │${N}"
-            echo -e "${W}└──────────────────────────────────────┘${N}"
+            echo -e "\n  ${GREEN}${BOLD}✅ Tool setup complete!${RESET}"
+            echo -e "  ${CYAN}╭──────────────────────────────────────╮${RESET}"
+            echo -e "  ${CYAN}│${RESET} ${DIM}Status:${RESET}   ${GREEN}Ready to use${RESET}             ${CYAN}│${RESET}"
+            echo -e "  ${CYAN}│${RESET} ${DIM}Location:${RESET} ${YELLOW}~/vm/.idx${RESET}                ${CYAN}│${RESET}"
+            echo -e "  ${CYAN}╰──────────────────────────────────────╯${RESET}"
         else
-            echo -e "${Y}⚠ Directory .idx already exists — skipping.${N}"
+            echo -e "  ${YELLOW}⚠ Directory .idx already exists — skipping.${RESET}"
         fi
         
-        echo -e "\n${M}════════════════════════════════════════════════${N}"
-        read -p "↩ Press Enter..."
+        echo -e ""
+        print_divider
+        read -p "  ↩ Press Enter to return..."
         ;;
     
-    # =========================================================
-    # (2) 𝗥𝘂𝗻 𝘃𝗺𝟭 Kvm — ENHANCED
-    # =========================================================
+    # ---------------------------------------------------------
+    # (2) Run VM1 Kvm
+    # ---------------------------------------------------------
     2)
         clear
-        print_status "🌐 Starting IDX VM From GitHub Script..." "$B"
-        echo -e "${M}════════════════════════════════════════════════${N}\n"
+        print_status "🌐 Starting IDX VM (KVM) From GitHub..." "$YELLOW"
+        print_divider
         
-        echo -e "${C}📡 Fetching script from GitHub...${N}"
+        echo -e "  ${CYAN}📡 Fetching script...${RESET}"
         bash <(curl -s https://raw.githubusercontent.com/sdgamer8263-sketch/VPS/main/Vm1)
         
-        echo -e "\n${M}════════════════════════════════════════════════${N}"
-        read -p "↩ Press Enter..."
+        echo -e ""
+        print_divider
+        read -p "  ↩ Press Enter to return..."
         ;;
 
-    # =========================================================
-    # (3) 𝗥𝘂𝗻 𝘃𝗺𝟮 No kvm  — ENHANCED
-    # =========================================================
+    # ---------------------------------------------------------
+    # (3) Run VM2 No KVM
+    # ---------------------------------------------------------
     3)
         clear
-        print_status "🌐 Starting vm 2 From GitHub Script..." "$B"
-        echo -e "${M}════════════════════════════════════════════════${N}\n"
+        print_status "🌐 Starting VM (No KVM) From GitHub..." "$BLUE"
+        print_divider
         
-        echo -e "${C}📡 Fetching script from GitHub...${N}"
-
+        echo -e "  ${CYAN}📡 Fetching scripts...${RESET}"
         bash <(curl -s https://raw.githubusercontent.com/sdgamer8263-sketch/VPS/main/Dd)
         bash <(curl -s https://raw.githubusercontent.com/sdgamer8263-sketch/VPS/main/Vm2)
         
-        echo -e "\n${M}════════════════════════════════════════════════${N}"
-        read -p "↩ Press Enter..."
+        echo -e ""
+        print_divider
+        read -p "  ↩ Press Enter to return..."
         ;;
 
-    # =========================================================
-    # (4) poxmox setup  — ENHANCED
-    # =========================================================
+    # ---------------------------------------------------------
+    # (4) Proxmox Setup
+    # ---------------------------------------------------------
     4)
         clear
-        print_status "🌐 Starting vm 2 From GitHub Script..." "$B"
-        echo -e "${M}════════════════════════════════════════════════${N}\n"
+        print_status "🌐 Starting Proxmox Setup From GitHub..." "$MAGENTA"
+        print_divider
         
-        echo -e "${C}📡 Fetching script from GitHub...${N}"
-
+        echo -e "  ${CYAN}📡 Fetching script...${RESET}"
         bash <(curl -s https://raw.githubusercontent.com/sdgamer8263-sketch/VPS/main/Proxmox)
         
-        echo -e "\n${M}════════════════════════════════════════════════${N}"
-        read -p "↩ Press Enter..."
+        echo -e ""
+        print_divider
+        read -p "  ↩ Press Enter to return..."
         ;;  
-    # =========================================================
-    # EXIT - ENHANCED
-    # =========================================================
+
+    # ---------------------------------------------------------
+    # (5) EXIT
+    # ---------------------------------------------------------
     5)
         clear
-        echo -e "\n${C}╔════════════════════════════════════════════════╗${N}"
-        echo -e "${C}║${R}                 E X I T I N G                  ${C}║${N}"
-        echo -e "${C}╚════════════════════════════════════════════════╝${N}\n"
-        echo -e "${Y}👋 Thank you for using the Development Menu!${N}\n"
-
+        echo -e "\n  ${CYAN}╭──────────────────────────────────────────────────────╮${RESET}"
+        echo -e "  ${CYAN}│${RESET}${BOLD}${WHITE}                     E X I T I N G                    ${CYAN}│${RESET}"
+        echo -e "  ${CYAN}╰──────────────────────────────────────────────────────╯${RESET}\n"
+        echo -e "  ${YELLOW}👋 Thank you for using the Development Menu!${RESET}\n"
         exit 0
         ;;
     
     *)
-        echo -e "\n${R}❌ Invalid Option! Please try again.${N}"
+        echo -e "\n  ${RED}❌ Invalid Option! Please try again.${RESET}"
         sleep 1
         ;;
     esac
